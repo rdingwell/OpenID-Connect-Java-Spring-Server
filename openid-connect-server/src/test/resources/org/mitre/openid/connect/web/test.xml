@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:task="http://www.springframework.org/schema/task" 
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- Scan for components -->
+	<context:component-scan annotation-config="true" base-package="org.mitre" />
+		<bean id="configBean" class="org.mitre.openid.connect.config.ConfigurationPropertiesBean">
+		<property name="issuer" value="http://localhost/" />
+ 		<property name="defaultJwtSigner"  value="rsa1"/>
+	</bean>
+	
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost/oic" />
+		<property name="username" value="oic" />
+		<property name="password" value="oic" />		
+	</bean>
+<!-- JPA -->
+
+	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+		<property name="databasePlatform" value="org.eclipse.persistence.platform.database.MySQLPlatform" />
+		<property name="showSql" value="true" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="openidPersistenceUnit" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter" ref="jpaAdapter" />
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="eclipselink.weaving" value="false" />
+				<entry key="eclipselink.logging.level" value="FINEST" />
+				<entry key="eclipselink.logging.level.sql" value="FINEST" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- End JPA -->
+
+
+			<security:user-service id="userDetailsService">
+				<security:user name="jricher" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="mfranklin" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="dcuomo" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="mjett" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="aanganes" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="mjwalsh" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="srmoore" password="password" authorities="ROLE_USER, ROLE_ADMIN" />
+		  	</security:user-service>
+
+		
+  <bean id="userInfoEndpoint" class="org.mitre.openid.connect.web.UserInfoEndpoint"> 
+   <property name="viewMapping"><map>
+   	<entry key="openid" value="oidView"/>
+   	<entry key="simple" value="simpleView"/>
+   </map></property>
+  </bean>
+
+</beans>

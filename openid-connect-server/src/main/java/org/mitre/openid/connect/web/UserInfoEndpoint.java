@@ -19,7 +19,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mitre.oauth2.service.OAuth2TokenEntityService;
 import org.mitre.openid.connect.exception.UnknownUserInfoSchemaException;
 import org.mitre.openid.connect.model.UserInfo;
 import org.mitre.openid.connect.service.UserInfoService;
